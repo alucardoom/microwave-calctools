@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>便利商店微波時間換算工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 50%, #34d399 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 2.5rem;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #059669;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        
+        .input-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-section h2 {
+            font-size: 1.125rem;
+            color: #92400e;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+        
+        .time-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .time-input-wrapper {
+            position: relative;
+        }
+        
+        .time-input-wrapper input {
+            padding-right: 3rem;
+        }
+        
+        .time-unit {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 600;
+            pointer-events: none;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(5, 150, 105, 0.3);
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-section h2 {
+            font-size: 1.125rem;
+            color: #1e40af;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .result-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.5rem;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .result-item.current {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+        }
+        
+        .result-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .power-main {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+        .power-sub {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .result-value {
+            font-size: 1.125rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .current-badge {
+            display: inline-block;
+            background: #f59e0b;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .info-box {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .info-box h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+            <h1>便利商店微波時間換算</h1>
+        </div>
+        
+        <p class="subtitle">將便利商店的微波建議時間換算成您家微波爐的各檔位時間</p>
+        
+        <div class="input-section">
+            <h2>🏠 您的微波爐設定</h2>
+            <div class="input-group">
+                <label for="max-power">微波爐最大功率 (W)</label>
+                <input type="number" id="max-power" value="800" step="50">
+            </div>
+            <div class="input-group">
+                <label for="power-percent">功率百分比 (%)</label>
+                <input type="number" id="power-percent" value="100" step="10" min="10" max="100">
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <h2>🏪 便利商店標示</h2>
+            <div class="input-group">
+                <label for="store-power">建議家用功率 (W)</label>
+                <input type="number" id="store-power" value="700" step="50">
+            </div>
+            <div class="input-group">
+                <label>建議加熱時間</label>
+                <div class="time-input">
+                    <div class="time-input-wrapper">
+                        <input type="number" id="store-min" placeholder="0" value="2" min="0">
+                        <span class="time-unit">分</span>
+                    </div>
+                    <div class="time-input-wrapper">
+                        <input type="number" id="store-sec" placeholder="0" value="30" min="0" max="59">
+                        <span class="time-unit">秒</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="calculate-btn" onclick="calculate()">🔄 計算換算時間</button>
+        
+        <div class="result-section" id="results" style="display: none;">
+            <h2>📊 您的微波爐各檔位時間</h2>
+            <div class="result-grid" id="result-grid">
+                <!-- 結果會動態生成 -->
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>💡 換算原理:</h3>
+            <p>根據「能量守恆」原理計算: 功率 × 時間 = 能量(固定)<br>
+            新時間 = (便利商店功率 × 建議時間) ÷ 您的微波爐功率<br>
+            標示「🔸 目前設定」的是您輸入的功率百分比對應的檔位。</p>
+        </div>
+        
+        <div class="info-box" style="margin-top: 1rem;">
+            <h3>⚠️ 使用提醒:</h3>
+            <p>• 首次使用建議從較短時間開始,快結束時注意觀察<br>
+            • 不同食品加熱特性不同,可能需要微調時間<br>
+            • 冷凍食品建議先解凍再加熱,效果更均勻<br>
+            • 加熱後靜置30秒讓溫度均勻分布</p>
+        </div>
+    </div>
+    
+    <script>
+        const powerLevels = [
+            { percent: 100, label: '100% (最大功率)' },
+            { percent: 80, label: '80%' },
+            { percent: 50, label: '50% (中火)' },
+            { percent: 30, label: '30%' },
+            { percent: 10, label: '10% (解凍)' }
+        ];
+        
+        function calculate() {
+            // 獲取輸入值
+            const maxPower = parseFloat(document.getElementById('max-power').value);
+            const powerPercent = parseFloat(document.getElementById('power-percent').value);
+            const storePower = parseFloat(document.getElementById('store-power').value);
+            const storeMin = parseFloat(document.getElementById('store-min').value) || 0;
+            const storeSec = parseFloat(document.getElementById('store-sec').value) || 0;
+            
+            // 驗證輸入
+            if (isNaN(maxPower) || isNaN(powerPercent) || isNaN(storePower)) {
+                alert('請填寫所有功率欄位!');
+                return;
+            }
+            
+            if (maxPower <= 0 || storePower <= 0) {
+                alert('功率必須大於 0!');
+                return;
+            }
+            
+            if (powerPercent < 10 || powerPercent > 100) {
+                alert('功率百分比必須在 10% 到 100% 之間!');
+                return;
+            }
+            
+            if (storeMin === 0 && storeSec === 0) {
+                alert('請輸入便利商店建議的加熱時間!');
+                return;
+            }
+            
+            // 計算便利商店建議的總秒數
+            const storeTotalSeconds = storeMin * 60 + storeSec;
+            
+            // 計算便利商店的總能量
+            const totalEnergy = storePower * storeTotalSeconds;
+            
+            // 計算使用者目前設定的功率
+            const currentPower = maxPower * (powerPercent / 100);
+            
+            // 生成結果
+            const resultGrid = document.getElementById('result-grid');
+            resultGrid.innerHTML = '';
+            
+            // 為每個檔位計算時間
+            powerLevels.forEach(level => {
+                const actualPower = maxPower * (level.percent / 100);
+                const newTimeSeconds = totalEnergy / actualPower;
+                const isCurrent = level.percent === powerPercent;
+                
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item' + (isCurrent ? ' current' : '');
+                
+                resultItem.innerHTML = `
+                    <div class="result-label">
+                        <div class="power-main">
+                            ${level.label}
+                            ${isCurrent ? '<span class="current-badge">🔸 目前設定</span>' : ''}
+                        </div>
+                        <div class="power-sub">${actualPower.toFixed(0)}W</div>
+                    </div>
+                    <div class="result-value">${formatTime(newTimeSeconds)}</div>
+                `;
+                
+                resultGrid.appendChild(resultItem);
+            });
+            
+            // 如果使用者設定的百分比不在標準檔位中,額外顯示
+            const isStandardLevel = powerLevels.some(level => level.percent === powerPercent);
+            if (!isStandardLevel) {
+                const newTimeSeconds = totalEnergy / currentPower;
+                const customItem = document.createElement('div');
+                customItem.className = 'result-item current';
+                customItem.innerHTML = `
+                    <div class="result-label">
+                        <div class="power-main">
+                            ${powerPercent}% (自訂)
+                            <span class="current-badge">🔸 目前設定</span>
+                        </div>
+                        <div class="power-sub">${currentPower.toFixed(0)}W</div>
+                    </div>
+                    <div class="result-value">${formatTime(newTimeSeconds)}</div>
+                `;
+                resultGrid.insertBefore(customItem, resultGrid.firstChild);
+            }
+            
+            // 顯示結果區域
+            document.getElementById('results').style.display = 'block';
+            
+            // 滾動到結果
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.round(seconds % 60);
+            
+            if (mins === 0) {
+                return `${secs} 秒`;
+            } else {
+                return `${mins} 分 ${secs.toString().padStart(2, '0')} 秒`;
+            }
+        }
+        
+        // 按 Enter 鍵計算
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>容積換算工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 2.5rem;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .icon {
+            width: 2rem;
+            height: 2rem;
+            color: #4f46e5;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group.ml {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+        
+        .input-group.oz {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        }
+        
+        .input-group.cup {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1.125rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .input-group.ml input:focus {
+            border-color: #3b82f6;
+        }
+        
+        .input-group.oz input:focus {
+            border-color: #a855f7;
+        }
+        
+        .input-group.cup input:focus {
+            border-color: #ec4899;
+        }
+        
+        .clear-btn {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background-color: #4b5563;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 2rem;
+        }
+        
+        .clear-btn:hover {
+            background-color: #374151;
+        }
+        
+        .info-box {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+        }
+        
+        .info-box h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+            <h1>容積換算工具</h1>
+        </div>
+        
+        <p class="subtitle">在任意欄位輸入數值,其他欄位會自動計算</p>
+        
+        <div class="input-group ml">
+            <label for="ml-input">毫升 (ml)</label>
+            <input type="number" id="ml-input" placeholder="輸入毫升數值" step="any">
+        </div>
+        
+        <div class="input-group oz">
+            <label for="oz-input">盎司 (oz)</label>
+            <input type="number" id="oz-input" placeholder="輸入盎司數值" step="any">
+        </div>
+        
+        <div class="input-group cup">
+            <label for="cup-input">杯 (cup) - 美制</label>
+            <input type="number" id="cup-input" placeholder="輸入杯數" step="any">
+        </div>
+        
+        <button class="clear-btn" onclick="clearAll()">清除全部</button>
+        
+        <div class="info-box">
+            <h3>換算基準:</h3>
+            <ul>
+                <li>• 1 oz = 29.5735 ml</li>
+                <li>• 1 cup = 236.588 ml (美制)</li>
+                <li>• 1 cup = 8 oz</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const mlInput = document.getElementById('ml-input');
+        const ozInput = document.getElementById('oz-input');
+        const cupInput = document.getElementById('cup-input');
+        
+        mlInput.addEventListener('input', function() {
+            if (this.value === '') {
+                ozInput.value = '';
+                cupInput.value = '';
+            } else {
+                const ml = parseFloat(this.value);
+                ozInput.value = (ml / 29.5735).toFixed(2);
+                cupInput.value = (ml / 236.588).toFixed(2);
+            }
+        });
+        
+        ozInput.addEventListener('input', function() {
+            if (this.value === '') {
+                mlInput.value = '';
+                cupInput.value = '';
+            } else {
+                const oz = parseFloat(this.value);
+                mlInput.value = (oz * 29.5735).toFixed(2);
+                cupInput.value = (oz / 8).toFixed(2);
+            }
+        });
+        
+        cupInput.addEventListener('input', function() {
+            if (this.value === '') {
+                mlInput.value = '';
+                ozInput.value = '';
+            } else {
+                const cup = parseFloat(this.value);
+                mlInput.value = (cup * 236.588).toFixed(2);
+                ozInput.value = (cup * 8).toFixed(2);
+            }
+        });
+        
+        function clearAll() {
+            mlInput.value = '';
+            ozInput.value = '';
+            cupInput.value = '';
+        }
+    </script>
+</body>
+</html>

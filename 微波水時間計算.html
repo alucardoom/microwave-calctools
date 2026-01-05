@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微波加熱時間計算工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 2.5rem;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #f59e0b;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        
+        .input-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-section h2 {
+            font-size: 1.25rem;
+            color: #92400e;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        input {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-section h2 {
+            font-size: 1.25rem;
+            color: #1e40af;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .result-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 0.5rem;
+        }
+        
+        .result-label {
+            font-size: 0.875rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .result-value {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 2px solid #22c55e;
+        }
+        
+        .highlight .result-value {
+            color: #15803d;
+            font-size: 1.25rem;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+        }
+        
+        .warning .result-value {
+            color: #dc2626;
+            font-size: 1.25rem;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .info-box {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .info-box h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .alert {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h1>微波加熱時間計算工具</h1>
+        </div>
+        
+        <p class="subtitle">根據水量、溫度和微波爐功率計算精確的加熱時間</p>
+        
+        <div class="input-section">
+            <h2>📝 輸入參數</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="start-temp">起始水溫 (°C)</label>
+                    <input type="number" id="start-temp" value="20" step="1">
+                </div>
+                <div class="input-group">
+                    <label for="target-temp">目標水溫 (°C)</label>
+                    <input type="number" id="target-temp" value="100" step="1">
+                </div>
+                <div class="input-group">
+                    <label for="water-volume">水量 (ml)</label>
+                    <input type="number" id="water-volume" value="500" step="10">
+                </div>
+                <div class="input-group">
+                    <label for="rated-power">標示功率 (W)</label>
+                    <input type="number" id="rated-power" value="800" step="50">
+                </div>
+                <div class="input-group">
+                    <label for="power-percent">功率百分比 (%)</label>
+                    <input type="number" id="power-percent" value="100" step="10" min="10" max="100">
+                </div>
+            </div>
+        </div>
+        
+        <button class="calculate-btn" onclick="calculate()">🔥 計算加熱時間</button>
+        
+        <div class="result-section" id="results" style="display: none;">
+            <h2>📊 計算結果</h2>
+            <div class="result-grid">
+                <div class="result-item">
+                    <span class="result-label">加熱效率 (η)</span>
+                    <span class="result-value">60%</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">有效功率 (W)</span>
+                    <span class="result-value" id="effective-power">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">所需能量 (J)</span>
+                    <span class="result-value" id="required-energy">-</span>
+                </div>
+                <div class="result-item highlight">
+                    <span class="result-label">⏱️ 理論加熱時間</span>
+                    <span class="result-value" id="heating-time">-</span>
+                </div>
+                <div class="result-item warning">
+                    <span class="result-label">⚠️ 建議單次最長安全時間</span>
+                    <span class="result-value" id="safe-time">-</span>
+                </div>
+            </div>
+            
+            <div class="alert" id="warning-message" style="display: none;">
+                ⚠️ <strong>注意:</strong> 理論加熱時間超過建議安全時間!建議分多次加熱,每次不超過安全時間,中間攪拌均勻後再繼續加熱。
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>💡 計算說明:</h3>
+            <ul>
+                <li>• 加熱效率固定為 60% (一般家用微波爐標準值)</li>
+                <li>• 水的比熱容: 4.2 J/(g·°C)</li>
+                <li>• 有效功率 = 標示功率 × 功率百分比 × 加熱效率</li>
+                <li>• 所需能量 = 水量 × 4.2 × (目標溫度 - 起始溫度)</li>
+                <li>• 理論加熱時間 = 所需能量 ÷ 有效功率</li>
+                <li>• 安全時間 = 水量 × 0.35 秒 (每100ml約35秒)</li>
+            </ul>
+        </div>
+        
+        <div class="info-box" style="margin-top: 1rem;">
+            <h3>⚠️ 安全提醒:</h3>
+            <ul>
+                <li>• 使用微波爐專用容器,避免使用金屬器皿</li>
+                <li>• 加熱過程中建議中途攪拌,避免局部過熱</li>
+                <li>• 取出時小心燙傷,使用隔熱手套</li>
+                <li>• 避免過度加熱導致爆沸現象</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function calculate() {
+            // 獲取輸入值
+            const startTemp = parseFloat(document.getElementById('start-temp').value);
+            const targetTemp = parseFloat(document.getElementById('target-temp').value);
+            const waterVolume = parseFloat(document.getElementById('water-volume').value);
+            const ratedPower = parseFloat(document.getElementById('rated-power').value);
+            const powerPercent = parseFloat(document.getElementById('power-percent').value);
+            
+            // 驗證輸入
+            if (isNaN(startTemp) || isNaN(targetTemp) || isNaN(waterVolume) || isNaN(ratedPower) || isNaN(powerPercent)) {
+                alert('請填寫所有欄位!');
+                return;
+            }
+            
+            if (targetTemp <= startTemp) {
+                alert('目標溫度必須大於起始溫度!');
+                return;
+            }
+            
+            if (waterVolume <= 0 || ratedPower <= 0 || powerPercent <= 0) {
+                alert('數值必須大於 0!');
+                return;
+            }
+            
+            // 計算
+            const efficiency = 0.6; // 固定效率 60%
+            const effectivePower = ratedPower * (powerPercent / 100) * efficiency;
+            const requiredEnergy = waterVolume * 4.2 * (targetTemp - startTemp);
+            const heatingTimeSeconds = requiredEnergy / effectivePower;
+            const safeTimeSeconds = waterVolume * 0.35;
+            
+            // 顯示結果
+            document.getElementById('effective-power').textContent = effectivePower.toFixed(1) + ' W';
+            document.getElementById('required-energy').textContent = requiredEnergy.toFixed(0) + ' J';
+            document.getElementById('heating-time').textContent = formatTime(heatingTimeSeconds);
+            document.getElementById('safe-time').textContent = formatTime(safeTimeSeconds);
+            
+            // 顯示結果區域
+            document.getElementById('results').style.display = 'block';
+            
+            // 判斷是否需要警告
+            const warningMessage = document.getElementById('warning-message');
+            if (heatingTimeSeconds > safeTimeSeconds) {
+                warningMessage.style.display = 'block';
+            } else {
+                warningMessage.style.display = 'none';
+            }
+            
+            // 滾動到結果區域
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.round(seconds % 60);
+            return `${seconds.toFixed(0)} 秒 (${mins}:${secs.toString().padStart(2, '0')})`;
+        }
+        
+        // 按 Enter 鍵也可以計算
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
