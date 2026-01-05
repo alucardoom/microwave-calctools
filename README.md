@@ -1,0 +1,2 @@
+# microwave-calctools
+練習使用github，並把常用的微波加熱時間計算小工具上傳到網路可隨時使用
