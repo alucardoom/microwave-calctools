@@ -84,6 +84,13 @@
             margin-bottom: 0.5rem;
         }
         
+        .label-note {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #6b7280;
+            margin-left: 0.25rem;
+        }
+        
         input {
             padding: 0.75rem;
             font-size: 1rem;
@@ -210,6 +217,67 @@
             font-size: 0.875rem;
             color: #92400e;
         }
+        
+        .reference-table {
+            background: #f0fdf4;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .reference-table h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: #dcfce7;
+            color: #065f46;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        td {
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .quick-fill {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 0.5rem;
+        }
+        
+        .quick-fill:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -221,22 +289,22 @@
             <h1>微波加熱時間計算工具</h1>
         </div>
         
-        <p class="subtitle">根據水量、溫度和微波爐功率計算精確的加熱時間</p>
+        <p class="subtitle">根據液體種類、溫度和微波爐功率計算精確的加熱時間</p>
         
         <div class="input-section">
             <h2>📝 輸入參數</h2>
             <div class="input-grid">
                 <div class="input-group">
-                    <label for="start-temp">起始水溫 (°C)</label>
+                    <label for="start-temp">起始溫度 (°C)</label>
                     <input type="number" id="start-temp" value="20" step="1">
                 </div>
                 <div class="input-group">
-                    <label for="target-temp">目標水溫 (°C)</label>
-                    <input type="number" id="target-temp" value="100" step="1">
+                    <label for="target-temp">目標溫度 (°C)</label>
+                    <input type="number" id="target-temp" value="65" step="1">
                 </div>
                 <div class="input-group">
-                    <label for="water-volume">水量 (ml)</label>
-                    <input type="number" id="water-volume" value="500" step="10">
+                    <label for="volume">液體容量 (ml)</label>
+                    <input type="number" id="volume" value="500" step="10">
                 </div>
                 <div class="input-group">
                     <label for="rated-power">標示功率 (W)</label>
@@ -245,6 +313,13 @@
                 <div class="input-group">
                     <label for="power-percent">功率百分比 (%)</label>
                     <input type="number" id="power-percent" value="100" step="10" min="10" max="100">
+                </div>
+                <div class="input-group">
+                    <label for="specific-heat">
+                        比熱容 (J/g·°C)
+                        <span class="label-note">水=4.2</span>
+                    </label>
+                    <input type="number" id="specific-heat" value="4.2" step="0.1" min="0.1">
                 </div>
             </div>
         </div>
@@ -281,15 +356,67 @@
             </div>
         </div>
         
+        <div class="reference-table">
+            <h3>🧪 常見飲料比熱容參考表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>飲料類型</th>
+                        <th>比熱容 (J/g·°C)</th>
+                        <th>建議目標溫度</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>水</td>
+                        <td>4.2</td>
+                        <td>100°C (沸騰)</td>
+                        <td><span class="quick-fill" onclick="fillHeat(4.2, 100)">套用</span></td>
+                    </tr>
+                    <tr>
+                        <td>鮮奶</td>
+                        <td>3.9</td>
+                        <td>60-70°C (溫熱)</td>
+                        <td><span class="quick-fill" onclick="fillHeat(3.9, 65)">套用</span></td>
+                    </tr>
+                    <tr>
+                        <td>豆漿</td>
+                        <td>4.0</td>
+                        <td>60-70°C</td>
+                        <td><span class="quick-fill" onclick="fillHeat(4.0, 65)">套用</span></td>
+                    </tr>
+                    <tr>
+                        <td>咖啡</td>
+                        <td>4.1</td>
+                        <td>60-70°C</td>
+                        <td><span class="quick-fill" onclick="fillHeat(4.1, 65)">套用</span></td>
+                    </tr>
+                    <tr>
+                        <td>茶</td>
+                        <td>4.1</td>
+                        <td>60-80°C</td>
+                        <td><span class="quick-fill" onclick="fillHeat(4.1, 70)">套用</span></td>
+                    </tr>
+                    <tr>
+                        <td>可可/巧克力牛奶</td>
+                        <td>3.8</td>
+                        <td>60-70°C</td>
+                        <td><span class="quick-fill" onclick="fillHeat(3.8, 65)">套用</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
         <div class="info-box">
             <h3>💡 計算說明:</h3>
             <ul>
                 <li>• 加熱效率固定為 60% (一般家用微波爐標準值)</li>
-                <li>• 水的比熱容: 4.2 J/(g·°C)</li>
                 <li>• 有效功率 = 標示功率 × 功率百分比 × 加熱效率</li>
-                <li>• 所需能量 = 水量 × 4.2 × (目標溫度 - 起始溫度)</li>
+                <li>• 所需能量 = 液體容量 × 比熱容 × (目標溫度 - 起始溫度)</li>
                 <li>• 理論加熱時間 = 所需能量 ÷ 有效功率</li>
-                <li>• 安全時間 = 水量 × 0.35 秒 (每100ml約35秒)</li>
+                <li>• 安全時間 = 液體容量 × 0.35 秒 (每100ml約35秒)</li>
+                <li>• 點擊參考表中的「套用」可快速填入對應的比熱容和建議溫度</li>
             </ul>
         </div>
         
@@ -299,22 +426,29 @@
                 <li>• 使用微波爐專用容器,避免使用金屬器皿</li>
                 <li>• 加熱過程中建議中途攪拌,避免局部過熱</li>
                 <li>• 取出時小心燙傷,使用隔熱手套</li>
+                <li>• 鮮奶、豆漿等含蛋白質飲料不建議煮沸(破壞營養、易溢出)</li>
                 <li>• 避免過度加熱導致爆沸現象</li>
             </ul>
         </div>
     </div>
     
     <script>
+        function fillHeat(specificHeat, targetTemp) {
+            document.getElementById('specific-heat').value = specificHeat;
+            document.getElementById('target-temp').value = targetTemp;
+        }
+        
         function calculate() {
             // 獲取輸入值
             const startTemp = parseFloat(document.getElementById('start-temp').value);
             const targetTemp = parseFloat(document.getElementById('target-temp').value);
-            const waterVolume = parseFloat(document.getElementById('water-volume').value);
+            const volume = parseFloat(document.getElementById('volume').value);
             const ratedPower = parseFloat(document.getElementById('rated-power').value);
             const powerPercent = parseFloat(document.getElementById('power-percent').value);
+            const specificHeat = parseFloat(document.getElementById('specific-heat').value);
             
             // 驗證輸入
-            if (isNaN(startTemp) || isNaN(targetTemp) || isNaN(waterVolume) || isNaN(ratedPower) || isNaN(powerPercent)) {
+            if (isNaN(startTemp) || isNaN(targetTemp) || isNaN(volume) || isNaN(ratedPower) || isNaN(powerPercent) || isNaN(specificHeat)) {
                 alert('請填寫所有欄位!');
                 return;
             }
@@ -324,7 +458,7 @@
                 return;
             }
             
-            if (waterVolume <= 0 || ratedPower <= 0 || powerPercent <= 0) {
+            if (volume <= 0 || ratedPower <= 0 || powerPercent <= 0 || specificHeat <= 0) {
                 alert('數值必須大於 0!');
                 return;
             }
@@ -332,9 +466,9 @@
             // 計算
             const efficiency = 0.6; // 固定效率 60%
             const effectivePower = ratedPower * (powerPercent / 100) * efficiency;
-            const requiredEnergy = waterVolume * 4.2 * (targetTemp - startTemp);
+            const requiredEnergy = volume * specificHeat * (targetTemp - startTemp);
             const heatingTimeSeconds = requiredEnergy / effectivePower;
-            const safeTimeSeconds = waterVolume * 0.35;
+            const safeTimeSeconds = volume * 0.35;
             
             // 顯示結果
             document.getElementById('effective-power').textContent = effectivePower.toFixed(1) + ' W';
